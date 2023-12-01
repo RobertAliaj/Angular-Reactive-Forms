@@ -8,11 +8,11 @@ function emailMatcher(formGroupBeingValidated: AbstractControl): { [key: string]
   let email: AbstractControl = formGroupBeingValidated.get('email');
   let confirmEmail: AbstractControl = formGroupBeingValidated.get('confirmEmail');
 
-  if(email.pristine || confirmEmail.pristine){
+  if (email.pristine || confirmEmail.pristine) {
     return null;
   }
 
-  if(email.value === confirmEmail.value){
+  if (email.value === confirmEmail.value) {
     return null;
   }
 
@@ -21,7 +21,7 @@ function emailMatcher(formGroupBeingValidated: AbstractControl): { [key: string]
 
 function ratingRange(min: number, max: number): ValidatorFn {
   return (formControlBeingValidated: AbstractControl): { [key: string]: boolean } | null => {
-    //if the value of the form-control is not null, is not a number, is smaller than 1 and bigger than 5 then we return true because one of the validators isnt valid
+    //if the value of the form-control is not null, is not a number, is smaller than 1 and bigger than 5 then we return true because one of the validators isn't valid
     if (formControlBeingValidated.value !== null && (isNaN(formControlBeingValidated.value) || formControlBeingValidated.value < min || formControlBeingValidated.value > max)) {
       return {range: true};
     }
@@ -55,6 +55,10 @@ export class CustomerComponent implements OnInit {
       rating: [null, ratingRange(1, 5)],
       sendCatalog: true
     });
+
+    this.customerForm.get('notification').valueChanges.subscribe(
+      value => this.setNotification(value)
+  )
   }
 
   save(): void {
