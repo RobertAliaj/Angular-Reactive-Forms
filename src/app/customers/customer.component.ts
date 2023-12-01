@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 
 import {Customer} from './customer';
 
-function ratingRange(formControlBeingValidated: AbstractControl): { [key: string]: boolean } | null {
-  /**
-    *if the value of the form-control is not null, is not a number, is smaller than
-   * 1 and bigger than 5 then we return true because one of the validators isnt valid* */
-  // tslint:disable-next-line:max-line-length
-  if (formControlBeingValidated.value !== null && (isNaN(formControlBeingValidated.value) || formControlBeingValidated.value < 1 || formControlBeingValidated.value > 5)) {
-    return {range: true };
+
+function ratingRange(min: number, max: number): ValidatorFn {
+  return (formControlBeingValidated: AbstractControl): { [key: string]: boolean } | null => {
+    //if the value of the form-control is not null, is not a number, is smaller than 1 and bigger than 5 then we return true because one of the validators isnt valid
+    if (formControlBeingValidated.value !== null && (isNaN(formControlBeingValidated.value) || formControlBeingValidated.value < min || formControlBeingValidated.value > max)) {
+      return {range: true};
+    }
+    return null;
   }
-  return null;
 }
 
 @Component({
@@ -21,6 +21,7 @@ function ratingRange(formControlBeingValidated: AbstractControl): { [key: string
 })
 export class CustomerComponent implements OnInit {
   customerForm: FormGroup;
+
   // customer = new Customer();
 
   constructor(private fb: FormBuilder) {
@@ -33,7 +34,7 @@ export class CustomerComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
       notification: [''],
-      rating: [null, ratingRange],
+      rating: [null, ratingRange(1, 5)],
       sendCatalog: true
     });
   }
