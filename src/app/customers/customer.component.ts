@@ -4,6 +4,21 @@ import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '
 import {Customer} from './customer';
 
 
+function emailMatcher(formGroupBeingValidated: AbstractControl): { [key: string]: boolean } | null {
+  let email: AbstractControl = formGroupBeingValidated.get('email');
+  let confirmEmail: AbstractControl = formGroupBeingValidated.get('confirmEmail');
+
+  if(email.pristine || confirmEmail.pristine){
+    return null;
+  }
+
+  if(email.value === confirmEmail.value){
+    return null;
+  }
+
+  return {match: true};
+}
+
 function ratingRange(min: number, max: number): ValidatorFn {
   return (formControlBeingValidated: AbstractControl): { [key: string]: boolean } | null => {
     //if the value of the form-control is not null, is not a number, is smaller than 1 and bigger than 5 then we return true because one of the validators isnt valid
@@ -34,7 +49,7 @@ export class CustomerComponent implements OnInit {
       emailGroup: this.fb.group({
         email: ['', [Validators.required, Validators.email]],
         confirmEmail: ['', Validators.required],
-      }),
+      }, {validator: emailMatcher}),
       phone: [''],
       notification: [''],
       rating: [null, ratingRange(1, 5)],
@@ -46,7 +61,6 @@ export class CustomerComponent implements OnInit {
     console.log(this.customerForm);
     console.log('Saved: ' + JSON.stringify(this.customerForm.value));
   }
-
 
   setNotification(notifyVia: string): void {
     const phoneControl: AbstractControl = this.customerForm.get('phone');
