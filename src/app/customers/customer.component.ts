@@ -78,6 +78,10 @@ export class CustomerComponent implements OnInit {
     )
   }
 
+  addAddressesGroup(): void{
+    this.addressesFormArray.push(this.buildAddressesGroup())
+  }
+
   buildAddressesGroup(): FormGroup {
     return this.fb.group({
       addressType: 'home',
